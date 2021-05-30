@@ -9,6 +9,7 @@ port
 import sys
 from tinydb import TinyDB, Query
 import docker
+import pdb
 
 docker_client = docker.from_env()
 
@@ -23,4 +24,5 @@ for container in docker_client.containers.list():
         nginxdb = TinyDB('nginx.json')
         entry = Query()
         nginxdb.insert({ 'name':f"{container.name}", 'url':'flosight.duckdns.org', 'id':f"{container.id}", 'port':f"{container.ports['80/tcp'][0]['HostPort']}", 'location':f"{flosight_nginxfile_location}"})
+        nginxdb.close()
         sys.exit()

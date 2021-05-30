@@ -30,10 +30,9 @@ container_list = client.containers.list()
 
 for container in container_list:
     container_status = container.status 
-    #if container_status == 'running':
-    #    pass
-    #elif container_status == 'exited':
-    if True:
+    if container_status == 'running':
+        pass
+    elif container_status == 'exited':
         # get its attributes before stopping
         # port number | volume name | logs 
         hostIp = container.ports['80/tcp'][0]['HostIp']
@@ -53,15 +52,6 @@ for container in container_list:
             if bool(re.search('^auto[0-9]*', split_volumeName[1])):
                 # extract the number
                 container_number = int(re.findall(r'\d+', 'auto123')[0])
-        
-        '''
-        docker run -d --name=flosight \
-                        -p 8080:80 \
-                        --mount source=flosight,target=/data \
-                        --env NETWORK=mainnet --env ADDNODE=0.0.0.0 \ --env BLOCKCHAIN_BOOTSTRAP=http://servername:port/data.tar.gz
-                        ranchimallfze/flosight
-        '''
-        
         
         # stop the container 
         container.stop()
@@ -85,6 +75,7 @@ for container in container_list:
         print("post")
 
         # NGINX CONFIGURATION 
+        ## update nginx file of Flosight's url  
 
         # CERTBOT CONFIGURATION 
 

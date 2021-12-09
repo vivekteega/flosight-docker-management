@@ -85,30 +85,30 @@ for container in container_list:
                 # spin a new container on the next port 
                 # todo - check if the port is open 
         
-        ## Prepare a Docker container configurations and parameters 
-        ##
-        container_name = f"{split_volumeName[0]}_auto{container_number+1}"
-        container_port = {'80/tcp': f"{int(hostPort)+1}"}
-        container_environment = {"NETWORK":"mainnet", "ADDNODE":"0.0.0.0", "BLOCKCHAIN_BOOTSTRAP":"http://ranchimall2.duckdns.org:2488/data.tar.gz"}
-        container_mounts = [Mount(source=f"{container_name}", target='/data', type='volume')]
-        container_image = 'ff6295a3700e'
+	        ## Prepare a Docker container configurations and parameters 
+        	##
+        	container_name = f"{split_volumeName[0]}_auto{container_number+1}"
+        	container_port = {'80/tcp': f"{int(hostPort)+1}"}
+        	container_environment = {"NETWORK":"mainnet", "ADDNODE":"0.0.0.0", "BLOCKCHAIN_BOOTSTRAP":"http://ranchimall2.duckdns.org:2488/data.tar.gz"}
+        	container_mounts = [Mount(source=f"{container_name}", target='/data', type='volume')]
+        	container_image = 'ff6295a3700e'
 
-        # create volume and run container 
-        logging.info(f"Creating new volume {container_name}")
-        docker_client.volumes.create(container_name)
-        logging.info("Running new container")
-        new_container = docker_client.containers.run(name=container_name, image=container_image, environment=container_environment, mounts=container_mounts, ports=container_port, detach=True)
+        	# create volume and run container 
+        	logging.info(f"Creating new volume {container_name}")
+        	docker_client.volumes.create(container_name)
+        	logging.info("Running new container")
+        	new_container = docker_client.containers.run(name=container_name, image=container_image, environment=container_environment, mounts=container_mounts, ports=container_port, detach=True)
 
-        # NGINX CONFIGURATION 
-        ## update nginx file of Flosight's url  
-        nginxdb = TinyDB('nginx.json')
-        entry = Query()
-        flosight_entry = nginxdb.search(entry.url=='flosight.duckdns.org')
-        flosight_entry = flosight_entry[0]
-        pdb.set_trace()
-        ## check if the current container is the right one 
-        if flosight_entry['id'].startswith(container.id):
-            # change the nginx configuration for this docker container 
+        	# NGINX CONFIGURATION 
+        	## update nginx file of Flosight's url  
+        	nginxdb = TinyDB('nginx.json')
+        	entry = Query()
+        	flosight_entry = nginxdb.search(entry.url=='flosight.duckdns.org')
+        	flosight_entry = flosight_entry[0]
+        	pdb.set_trace()
+        	## check if the current container is the right one 
+        	if flosight_entry['id'].startswith(container.id):
+            	# change the nginx configuration for this docker container 
             edit_nginx(flosight_entry['location'], {int(hostPort)}, {int(hostPort)+1})
             nginxdb.update({'port': int(hostPort)+1}, entry.url == 'flosight.duckdns.org')
             nginxdb.update({'id': new_container.id}, entry.url == 'flosight.duckdns.org')

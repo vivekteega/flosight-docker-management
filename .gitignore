@@ -1,2 +1,4 @@
 *.log
 *.json
+log.txt
+*.save
